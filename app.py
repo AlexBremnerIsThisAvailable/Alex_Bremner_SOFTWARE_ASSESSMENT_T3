@@ -62,7 +62,7 @@ def logout():
 
 @app.route('/signup')
 def signup():
-    return render_template('signup.html') 
+    return render_template('signUp.html') 
 
 @app.route('/add_user', methods=['POST'])
 def add_user():
@@ -117,7 +117,7 @@ def adminhome():
     user = request.args.get('user')
     if role != 'Admin': abort(403) 
     users = get_all_users()
-    return render_template('adminhome.html', users=users, user=user, role=role) 
+    return render_template('adminHome.html', users=users, user=user, role=role) 
 
 @app.route('/admin_change_role', methods=['POST'])
 def admin_change_role():
