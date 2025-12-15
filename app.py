@@ -3,7 +3,6 @@ import sqlite3
 import os
 
 app = Flask(__name__)
-
 app.secret_key = os.urandom(24) 
 
 DATABASE_FILE = 'LoginData.db' 
@@ -26,20 +25,26 @@ def login_validation():
 
     if len(user_records) > 0:
 
-        user_data = user_records[0]
-
-        return redirect(f'/home?username={user_data[0]}&password={user_data[1]}')
+        return redirect(f'/home?status=logged_in&user={Username}')
     else: 
-        return redirect(url_for('login'))
+        return redirect(url_for('login')) 
 
 @app.route('/home')
 def home():
 
-    username = request.args.get('username')
-    password = request.args.get('password')
+    status = request.args.get('status')
+    username = request.args.get('user')
     
+ 
+    return render_template('home.html', username=username, status=status)
 
-    return render_template('home.html', username=username, password=password)
+
+@app.route('/logout')
+def logout():
+
+    return redirect(url_for('login'))
+
+
 
 @app.route('/signup')
 def signup():
@@ -54,14 +59,15 @@ def add_user():
     cursor = connection.cursor()
 
     try:
-
+      
         cursor.execute("INSERT INTO USERS (Username, password) VALUES (?, ?)", (Username, password))
         connection.commit()
         
-
-        return redirect(f'/home?username={Username}&password={password}')
+    
+        return redirect(f'/home?status=logged_in&user={Username}')
 
     except sqlite3.IntegrityError:
+    
         connection.rollback()
         return redirect(url_for('signup'))
         
