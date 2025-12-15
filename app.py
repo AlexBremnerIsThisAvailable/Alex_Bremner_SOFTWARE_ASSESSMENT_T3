@@ -7,6 +7,16 @@ app.secret_key = os.urandom(24)
 
 DATABASE_FILE = 'LoginData.db' 
 
+
+def get_posts():
+    conn = sqlite3.connect(DATABASE_FILE)
+    conn.row_factory = sqlite3.Row 
+    cursor = conn.cursor()
+ 
+    posts = cursor.execute("SELECT * FROM POSTS ORDER BY timestamp DESC").fetchall()
+    conn.close()
+    return posts
+
 @app.route('/')
 def login():
     return render_template('login.html')
@@ -15,36 +25,28 @@ def login():
 def login_validation():
     Username = request.form.get('username') 
     password = request.form.get('password')
-  
     connection = sqlite3.connect(DATABASE_FILE) 
     cursor = connection.cursor()
-  
-
     user_records = cursor.execute("SELECT * FROM USERS WHERE Username = ? AND password = ?", (Username, password)).fetchall()
     connection.close()
 
     if len(user_records) > 0:
-
+   
         return redirect(f'/home?status=logged_in&user={Username}')
     else: 
         return redirect(url_for('login')) 
 
 @app.route('/home')
 def home():
-
-    status = request.args.get('status')
     username = request.args.get('user')
-    
+   
+    posts = get_posts() 
  
-    return render_template('home.html', username=username, status=status)
-
+    return render_template('home.html', username=username, posts=posts)
 
 @app.route('/logout')
 def logout():
-
     return redirect(url_for('login'))
-
-
 
 @app.route('/signup')
 def signup():
@@ -54,25 +56,36 @@ def signup():
 def add_user():
     Username = request.form.get('username')
     password = request.form.get('password')
-    
     connection = sqlite3.connect(DATABASE_FILE)
     cursor = connection.cursor()
 
     try:
-      
         cursor.execute("INSERT INTO USERS (Username, password) VALUES (?, ?)", (Username, password))
         connection.commit()
-        
-    
         return redirect(f'/home?status=logged_in&user={Username}')
-
     except sqlite3.IntegrityError:
-    
         connection.rollback()
         return redirect(url_for('signup'))
-        
     finally:
         connection.close()
+
+
+@app.route('/create_post', methods=['POST'])
+def create_post():
+   
+    post_content = request.form.get('content')
+   
+    username = request.args.get('user', 'Anonymous') 
+
+    if post_content:
+        conn = sqlite3.connect(DATABASE_FILE)
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO POSTS (username, content) VALUES (?, ?)", (username, post_content))
+        conn.commit()
+        conn.close()
+    
+   
+    return redirect(f'/home?status=logged_in&user={username}')
 
 
 if __name__ == '__main__':

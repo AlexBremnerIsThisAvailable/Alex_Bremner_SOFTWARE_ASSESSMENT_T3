@@ -11,15 +11,17 @@ cmd1 = """ CREATE TABLE IF NOT EXISTS USERS (
 cursor.execute(cmd1)
 
 
-cmd2 = """ INSERT OR IGNORE INTO USERS (Username, password) values (?, ?) """
+cmd3 = """ CREATE TABLE IF NOT EXISTS POSTS (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL,
+    content TEXT NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+) """
+cursor.execute(cmd3)
 
+
+cmd2 = """ INSERT OR IGNORE INTO USERS (Username, password) values (?, ?) """
 cursor.execute(cmd2, ('tester', 'tester1')) 
 
 connection.commit()
-
-ans = cursor.execute("select * from USERS").fetchall()
-print("Current database users:")
-for i in ans:
-    print(i)
-
 connection.close()

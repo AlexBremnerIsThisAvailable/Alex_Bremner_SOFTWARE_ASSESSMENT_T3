@@ -11,7 +11,7 @@
     <header class="navbar">
         <div class="site-title">Pixel Hub</div>
         <nav>
-            <a href="home.html" class="active">Home</a>
+            <a href="/home" class="active">Home</a>
             <a href="#">Profile</a>
             <a href="#">Messages</a>
             <a href="/logout">Logout</a>
@@ -30,29 +30,38 @@
         </aside>
 
         <section class="feed">
-            <div class="post-editor">
-                <textarea placeholder="What's on your mind?"></textarea>
-                <button>Post Update</button>
-            </div>
+         
+            <form action="/create_post?user={{ username }}" method="POST" class="post-editor">
+                <textarea name="content" placeholder="What's on your mind?"></textarea>
+                <button type="submit">Post Update</button>
+            </form>
             
 
+          
+            {% for post in posts %}
             <article class="post">
-                <div class="post-header">testing1 - <span class="post-time">1 hour ago</span></div>
-                <p>testing1</p>
+                <div class="post-header">
+                    {{ post['username'] }} - 
+                    <span class="post-time">{{ post['timestamp'] }}</span>
+                </div>
+                <p>{{ post['content'] }}</p>
                 <div class="post-actions">
                     <span> Like</span>
                     <span> Comment</span>
                     <span> Share</span>
                 </div>
             </article>
+            {% endfor %}
+
+
         </section>
 
         <aside class="sidebar-right">
             <h3>Trending Topics</h3>
             <ul>
-                <li></li>
-                <li></li>
-                <li></li>
+                <li>Topic A</li>
+                <li>Topic B</li>
+                <li>Topic C</li>
             </ul>
         </aside>
     </main>
