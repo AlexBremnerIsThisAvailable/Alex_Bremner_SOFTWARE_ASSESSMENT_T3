@@ -39,11 +39,9 @@ def login_validation():
     connection.close()
 
     if user_record:
-     
-        logged_in_user = user_record[0] 
-        user_role = user_record[1] 
-        
 
+        logged_in_user = user_record[0]
+        user_role = user_record[1]
         return redirect(f'/home?status=logged_in&user={logged_in_user}&role={user_role}')
     else: 
         return redirect(url_for('login')) 
@@ -52,9 +50,7 @@ def login_validation():
 def home():
     username = request.args.get('user')
     role = request.args.get('role')
-
-    if not username:
-         return redirect(url_for('login'))
+    if not username: return redirect(url_for('login'))
 
     posts = get_posts() 
     return render_template('home.html', username=username, posts=posts, role=role)
@@ -88,14 +84,12 @@ def create_post():
     post_content = request.form.get('content')
     username = request.args.get('user', 'Anonymous') 
     role = request.args.get('role')
-
     if post_content and username:
         conn = sqlite3.connect(DATABASE_FILE)
         cursor = conn.cursor()
         cursor.execute("INSERT INTO POSTS (username, content) VALUES (?, ?)", (username, post_content))
         conn.commit()
         conn.close()
-    
     return redirect(f'/home?status=logged_in&user={username}&role={role}')
 
 @app.route('/delete_post', methods=['POST'])
@@ -107,28 +101,20 @@ def delete_post():
     if post_id and current_user_deleting:
         conn = sqlite3.connect(DATABASE_FILE)
         cursor = conn.cursor()
-        
         if current_user_role == 'Admin':
             cursor.execute("DELETE FROM POSTS WHERE id = ?", (post_id,))
         else:
             cursor.execute("DELETE FROM POSTS WHERE id = ? AND username = ?", (post_id, current_user_deleting))
-            
         conn.commit()
         conn.close()
-    
     return redirect(f'/home?status=logged_in&user={current_user_deleting}&role={current_user_role}')
-
-
 
 
 @app.route('/adminhome')
 def adminhome():
     role = request.args.get('role')
     user = request.args.get('user')
-    
-    if role != 'Admin':
-        abort(403) 
-
+    if role != 'Admin': abort(403) 
     users = get_all_users()
     return render_template('adminhome.html', users=users, user=user, role=role) 
 
@@ -136,38 +122,29 @@ def adminhome():
 def admin_change_role():
     role = request.args.get('role')
     user = request.args.get('user')
-
     if role != 'Admin': abort(403)
-
     target_user = request.form.get('username')
     new_role = request.form.get('new_role')
-
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
     cursor.execute("UPDATE USERS SET role = ? WHERE Username = ?", (new_role, target_user))
     conn.commit()
     conn.close()
-
     return redirect(f'/adminhome?user={user}&role={role}')
 
 @app.route('/admin_delete_account', methods=['POST'])
 def admin_delete_account():
     role = request.args.get('role')
     user = request.args.get('user')
-
     if role != 'Admin': abort(403)
-
     target_user = request.form.get('username')
-
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
     cursor.execute("DELETE FROM POSTS WHERE username = ?", (target_user,))
     cursor.execute("DELETE FROM USERS WHERE Username = ?", (target_user,))
     conn.commit()
     conn.close()
-
     return redirect(f'/adminhome?user={user}&role={role}')
-
 
 if __name__ == '__main__':
     app.run(debug=True)

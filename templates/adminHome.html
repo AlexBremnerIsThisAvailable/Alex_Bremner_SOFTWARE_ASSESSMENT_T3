@@ -5,12 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Home</title>
     <link rel="stylesheet" href="/static/styles.css">
-    <style>
-        .user-list { background-color: #474545; padding: 20px; border-radius: 8px; }
-        .user-row { padding: 10px 0; border-bottom: 1px solid #535050; display: flex; justify-content: space-between; align-items: center; }
-        .user-actions { display: flex; gap: 10px; }
-        .user-actions button { padding: 5px 10px; font-size: 0.8rem; }
-    </style>
+
 </head>
 <body>
     <header class="navbar">
@@ -44,8 +39,8 @@
                             {% endif %}
                         </form>
                         
-                        <form action="/admin_delete_account?user={{ user }}&role={{ role }}" method="POST" onsubmit="return confirm('Are you sure you want to delete {{ user_record.Username }}?');"
-
+                        <form action="/admin_delete_account?user={{ user }}&role={{ role }}" method="POST" onsubmit="return confirm('Are you sure you want to delete {{ user_record.Username }}?');">
+                            
                             <input type="hidden" name="username" value="{{ user_record['Username'] }}">
                             <button type="submit" style="background-color: #ff4d4d;">Delete Account</button>
                         </form>
