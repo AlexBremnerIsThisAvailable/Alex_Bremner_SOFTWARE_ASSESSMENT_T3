@@ -11,32 +11,24 @@
     <header class="navbar">
         <div class="site-title">Pixel Hub</div>
         <nav>
-            <a href="/home" class="active">Home</a>
-            <a href="#">Profile</a>
-            <a href="#">Messages</a>
+            
+            <a href="/home?user={{ username }}&role={{ role }}" class="active">Home</a>
+            {% if role == 'Admin' %}
+            <a href="/adminhome?user={{ username }}&role={{ role }}">Admin home</a>
+            {% endif %}
             <a href="/logout">Logout</a>
         </nav>
     </header>
 
+
     <main class="main-content">
-        <aside class="sidebar-left">
-            <h3>Navigation</h3>
-            <ul>
-                <li><a href="#">Feed</a></li>
-                <li><a href="#">Friends</a></li>
-                <li><a href="#">Groups</a></li>
-                <li><a href="#">Settings</a></li>
-            </ul>
-        </aside>
-
+        
         <section class="feed">
-
-            <form action="/create_post?user={{ username }}" method="POST" class="post-editor">
+            <form action="/create_post?user={{ username }}&role={{ role }}" method="POST" class="post-editor">
                 <textarea name="content" placeholder="What's on your mind?"></textarea>
                 <button type="submit">Post Update</button>
             </form>
             
-
 
             {% for post in posts %}
             <article class="post">
@@ -44,11 +36,9 @@
                     {{ post['username'] }} - 
                     <span class="post-time">{{ post['timestamp'] }}</span>
                     
-    
-                    {% if post['username'] == username %}
-                    <form action="/delete_post?user={{ username }}" method="POST" style="display:inline; float:right;">
+                    {% if post['username'] == username or role == 'Admin' %}
+                    <form action="/delete_post?user={{ username }}&role={{ role }}" method="POST" style="display:inline; float:right;">
                         <input type="hidden" name="post_id" value="{{ post['id'] }}">
-          
                         <button type="submit" style="background: none; border: none; color: #ff4d4d; cursor: pointer; font-size: 0.8rem;">Delete</button>
                     </form>
                     {% endif %}
@@ -61,17 +51,8 @@
                 </div>
             </article>
             {% endfor %}
-
         </section>
-
-        <aside class="sidebar-right">
-            <h3>Trending Topics</h3>
-            <ul>
-                <li>Topic A</li>
-                <li>Topic B</li>
-                <li>Topic C</li>
-            </ul>
-        </aside>
+        
     </main>
 </body>
 </html>

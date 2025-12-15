@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Home</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .user-list { background-color: #474545; padding: 20px; border-radius: 8px; }
+        .user-row { padding: 10px 0; border-bottom: 1px solid #535050; display: flex; justify-content: space-between; align-items: center; }
+        .user-actions { display: flex; gap: 10px; }
+        .user-actions button { padding: 5px 10px; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="site-title">Pixel Hub</div>
+        <nav>
+
+            <a href="/home?user={{ user }}&role={{ role }}">Home</a>
+
+            <a href="/adminhome?user={{ user }}&role={{ role }}" class="active">Admin Home</a>
+            <a href="/logout">Logout</a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <section class="feed" style="flex-basis: 100%;">
+            <h2>User Management (Admin Only)</h2>
+            <div class="user-list">
+                {% for user_record in users %}
+                <div class="user-row">
+                    <span><strong>{{ user_record['Username'] }}</strong> (Role: {{ user_record['role'] }})</span>
+                    <div class="user-actions">
+                   
+                        <form action="/admin_change_role?user={{ user }}&role={{ role }}" method="POST">
+                            <input type="hidden" name="username" value="{{ user_record['Username'] }}">
+                            {% if user_record['role'] == 'User' %}
+                                <input type="hidden" name="new_role" value="Admin">
+                                <button type="submit">Make Admin</button>
+                            {% else %}
+                                <input type="hidden" name="new_role" value="User">
+                                <button type="submit">Make User</button>
+                            {% endif %}
+                        </form>
+                        
+                        <form action="/admin_delete_account?user={{ user }}&role={{ role }}" method="POST" onsubmit="return confirm('Are you sure you want to delete {{ user_record.Username }}?');"
+
+                            <input type="hidden" name="username" value="{{ user_record['Username'] }}">
+                            <button type="submit" style="background-color: #ff4d4d;">Delete Account</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+</body>
+</html>
