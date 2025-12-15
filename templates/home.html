@@ -11,7 +11,6 @@
     <header class="navbar">
         <div class="site-title">Pixel Hub</div>
         <nav>
-            
             <a href="/home?user={{ username }}&role={{ role }}" class="active">Home</a>
             {% if role == 'Admin' %}
             <a href="/adminhome?user={{ username }}&role={{ role }}">Admin home</a>
@@ -19,7 +18,6 @@
             <a href="/logout">Logout</a>
         </nav>
     </header>
-
 
     <main class="main-content">
         
@@ -29,6 +27,7 @@
                 <button type="submit">Post Update</button>
             </form>
             
+
 
             {% for post in posts %}
             <article class="post">
@@ -44,11 +43,9 @@
                     {% endif %}
                 </div>
                 <p>{{ post['content'] }}</p>
-                <div class="post-actions">
-                    <span> Like</span>
-                    <span> Comment</span>
-                    <span> Share</span>
-                </div>
+                
+      
+
             </article>
             {% endfor %}
         </section>
