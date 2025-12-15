@@ -83,10 +83,29 @@ def create_post():
         cursor.execute("INSERT INTO POSTS (username, content) VALUES (?, ?)", (username, post_content))
         conn.commit()
         conn.close()
-    
+    return redirect(f'/home?status=logged_in&user={username}') 
    
+
+@app.route('/delete_post', methods=['POST'])
+def delete_post():
+
+    post_id = request.form.get('post_id')
+    username = request.args.get('user')
+
+    if post_id and username:
+        conn = sqlite3.connect(DATABASE_FILE)
+        cursor = conn.cursor()
+        
+
+        cursor.execute("DELETE FROM POSTS WHERE id = ? AND username = ?", (post_id, username))
+        conn.commit()
+        conn.close()
+    
+
     return redirect(f'/home?status=logged_in&user={username}')
 
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
