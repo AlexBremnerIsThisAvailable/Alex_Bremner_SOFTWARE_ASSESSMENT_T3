@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, abort
 import sqlite3
 import os
+from waitress import serve
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24) 
@@ -147,4 +148,4 @@ def admin_delete_account():
     return redirect(f'/adminhome?user={user}&role={role}')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    serve(app, host="0.0.0.0", port=8000)
